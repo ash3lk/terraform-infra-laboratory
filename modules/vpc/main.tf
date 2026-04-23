@@ -1,4 +1,4 @@
-module "vpc_internal" {
+module "vpc_logic" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 5.0"
 
