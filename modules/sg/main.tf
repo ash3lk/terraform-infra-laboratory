@@ -1,4 +1,4 @@
-resource "aws_security_group" "main_sg" {
+resource "aws_security_group" "ec2_sg" {
   name        = "main-sg-${var.env}"
   description = "Security Group for ${var.env} environment"
   vpc_id      = var.vpc_id
@@ -44,5 +44,10 @@ resource "aws_security_group" "rds_sg" {
     to_port     = 0
     protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
+  }
+ 
+tags = {
+    Name        = "sg-${var.env}"
+    Environment = var.env
   }
 }
