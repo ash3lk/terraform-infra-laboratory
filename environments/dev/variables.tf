@@ -1,3 +1,9 @@
+variable "region" {
+  description = "AWS Region where resources will be created"
+  type        = string
+  default     = "eu-north-1"
+}
+
 variable "env" {
   type        = string
   description = "Dev,prod,infra"
@@ -38,3 +44,4 @@ variable "instance_type" {
   default     = "t3.micro" 
   description = "EC2 instance type"
 }
+
