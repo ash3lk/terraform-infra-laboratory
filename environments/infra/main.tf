@@ -1,13 +1,32 @@
-module "vpc_infra" {
-  source = "terraform-aws-modules/vpc/aws"
+# Backend ECR 
+resource "aws_ecr_repository" "backend" {
+  name = "terraform-infra-laboratory-backend" 
+  
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
 
-  name = "vpc-infra"
-  cidr = "10.2.0.0/16"
+# Frontend ECR
+resource "aws_ecr_repository" "frontend" {
+  name = "terraform-infra-laboratory-frontend"
+  
+  image_tag_mutability = "MUTABLE"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
 
-  azs             = ["eu-north-1a", "eu-north-1b", "eu-north-1c"]
-  private_subnets = ["10.2.10.0/24", "10.2.11.0/24", "10.2.12.0/24"]
-  public_subnets  = ["10.2.20.0/24", "10.2.21.0/24", "10.2.22.0/24"]
+# S3 bucket
+resource "aws_s3_bucket" "storage" {
+  bucket = "terraform-infra-laboratory-shlyapik-storage"
+}
 
-  enable_nat_gateway = true
-  single_nat_gateway  = true
+output "backend_repo_url" {
+  value = aws_ecr_repository.backend.repository_url
+}
+
+output "frontend_repo_url" {
+  value = aws_ecr_repository.frontend.repository_url
 }

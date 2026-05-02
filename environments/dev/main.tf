@@ -1,3 +1,4 @@
+# 1. AMI Lookup
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"] 
@@ -8,7 +9,7 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# 1. VPC
+# 2. VPC
 module "vpc" {
   source          = "../../modules/vpc"
   env             = var.env
@@ -18,7 +19,7 @@ module "vpc" {
   private_subnets = var.private_subnets
 }
 
-# 2. Security Group
+# 3. Security Group
 module "sg" {
   source        = "../../modules/sg"
   env           = var.env
@@ -26,7 +27,7 @@ module "sg" {
   allowed_ports = var.allowed_ports
 }
 
-# 3. EC2
+# 4. EC2
 module "ec2" {
   source    = "../../modules/ec2"
   env       = var.env
@@ -35,4 +36,12 @@ module "ec2" {
   
   subnet_id = module.vpc.public_subnets[0] 
   sg_id     = module.sg.sg_id              
+}
+
+#5. RDS
+module "rds" {
+  source          = "../../modules/rds"
+  env             = var.env
+  private_subnets = module.vpc.private_subnets
+  db_sg_id        = module.sg.rds_sg_id
 }

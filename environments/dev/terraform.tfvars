@@ -1,5 +1,5 @@
 env             = "dev"
-key_name        = "my-aws-key" 
+key_name        = "Test1" 
 instance_type   = "t3.micro"
 vpc_cidr        = "10.0.0.0/16"
 azs             = ["eu-north-1a", "eu-north-1b", "eu-north-1c"]
