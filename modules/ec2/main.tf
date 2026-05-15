@@ -6,7 +6,9 @@ resource "aws_instance" "web" {
   vpc_security_group_ids = [var.sg_id]
   
   key_name      = var.key_name
-  
+
+  iam_instance_profile = var.iam_instance_profile
+
   associate_public_ip_address = true
 
   tags = {
@@ -15,3 +17,4 @@ resource "aws_instance" "web" {
     OS          = "Ubuntu-22.04"
   }
 }
+ 

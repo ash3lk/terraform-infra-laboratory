@@ -12,3 +12,9 @@ output "public_subnet_ids" {
   description = "IDs of the public subnets"
   value       = module.vpc.public_subnets
 }
+
+output "rds_endpoint" {
+  description = "RDS instance endpoint"
+  value       = module.rds.db_endpoint
+}
+

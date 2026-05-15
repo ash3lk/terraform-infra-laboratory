@@ -28,3 +28,10 @@ variable "sg_id" {
   type        = string
   description = "Security Group ID to attach to the instance"
 }
+
+variable "iam_instance_profile" {
+  type        = string
+  description = "The IAM instance profile name for the EC2 role"
+  default     = null
+}
+
