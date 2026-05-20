@@ -35,3 +35,8 @@ variable "iam_instance_profile" {
   default     = null
 }
 
+variable "backend_image_url" {
+  description = "URL of the Docker Image in ECR"
+  type        = string
+}
+

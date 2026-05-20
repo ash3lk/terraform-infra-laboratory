@@ -1,6 +1,6 @@
-output "ec_sg_id" {
-  description = "Created security group ID"
-  value       = aws_security_group.main_sg.id
+output "ec2_sg_id" {
+  description = "Created security group ID for EC2"
+  value       = aws_security_group.ec2_sg.id
 }
 
 output "rds_sg_id" {

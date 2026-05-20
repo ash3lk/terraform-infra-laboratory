@@ -23,9 +23,10 @@ resource "aws_security_group" "ec2_sg" {
   }
 
   tags = {
-    Name        = "sg-${var.env}"
+    Name        = "sg-ec2-${var.env}"
     Environment = var.env
   }
+}
 
 #SG for DB
 resource "aws_security_group" "rds_sg" {
@@ -47,7 +48,7 @@ resource "aws_security_group" "rds_sg" {
   }
  
 tags = {
-    Name        = "sg-${var.env}"
+    Name        = "sg-rds-${var.env}"
     Environment = var.env
   }
 }

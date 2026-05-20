@@ -11,6 +11,20 @@ resource "aws_instance" "web" {
 
   associate_public_ip_address = true
 
+user_data = <<-EOF
+              #!/bin/bash
+
+              apt-get update -y
+              apt-get install -y docker.io
+              systemctl start docker
+              systemctl enable docker       
+              usermod -aG docker ubuntu
+              apt-get install -y awscli
+              aws ecr get-login-password --region eu-north-1 | docker login --username AWS --password-stdin ${var.backend_image_url}ер
+              docker run -d -p 80:8080 ${var.backend_image_url}
+              EOF
+
+
   tags = {
     Name        = "server-${var.env}"
     Environment = var.env

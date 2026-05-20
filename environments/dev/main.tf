@@ -10,6 +10,9 @@ data "aws_ami" "ubuntu" {
 }
 
 #2. Iam Resources
+data "aws_region" "current" {}
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "ec2_role" {
   name = "${var.env}-ec2-role"
 
@@ -22,6 +25,29 @@ resource "aws_iam_role" "ec2_role" {
     }]
   })
 }
+
+resource "aws_iam_policy" "ssm_rds_read" {
+  name        = "${var.env}-ec2-ssm-rds-read-policy"
+  description = "Allows EC2 to safely fetch RDS password from SSM Parameter Store"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Action = [
+        "ssm:GetParameter",
+        "ssm:GetParameters"
+      ]
+Resource = "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${var.env}/rds/*"
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_read" {
+  role       = aws_iam_role.ec2_role.name
+  policy_arn = aws_iam_policy.ssm_rds_read.arn
+}
+
 
 resource "aws_iam_role_policy_attachment" "ecr_read" {
   role       = aws_iam_role.ec2_role.name

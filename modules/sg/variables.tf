@@ -10,6 +10,6 @@ variable "vpc_id" {
 
 variable "allowed_ports" {
   type        = list(number)
-  default     = [22, 80, 443]
+  default     = [22, 8080]
   description = "List of allowed ingress ports"
 }

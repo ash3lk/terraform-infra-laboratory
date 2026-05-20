@@ -12,14 +12,14 @@ resource "aws_db_subnet_group" "postgres" {
 resource "aws_db_instance" "postgres" {
   identifier        = "${var.env}-postgres-db"
   engine            = "postgres"
-  engine_version    = "15.4"           
+  engine_version    = "15"           
   instance_class    = "db.t3.micro"    
   
   allocated_storage     = 20           
   max_allocated_storage = 100          
   storage_type          = "gp3"
 
-  db_name  = "infra-laboratory_db"
+  db_name  = "infra_laboratory_db"
   username = "dbadmin"
   password = random_password.db_password.result 
 
@@ -29,7 +29,7 @@ resource "aws_db_instance" "postgres" {
   publicly_accessible    = false       
   skip_final_snapshot    = true        
   
-  backup_retention_period = 7          
+  backup_retention_period = 0         
   multi_az                = false       
 
   tags = {
@@ -40,12 +40,13 @@ resource "aws_db_instance" "postgres" {
 # 3. Password generation
 resource "random_password" "db_password" {
   length           = 16
-  special          = true
-  override_special = "!#$&"
+  special          = false
+  override_special = ""
 }
 
 # 4. Password in SSM
 resource "aws_ssm_parameter" "db_password" {
+  
   name        = "/${var.env}/rds/db_password"
   description = "Master password for ${var.env} database"
   type        = "SecureString"
