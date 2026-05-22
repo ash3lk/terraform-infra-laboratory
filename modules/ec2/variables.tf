@@ -40,3 +40,7 @@ variable "backend_image_url" {
   type        = string
 }
 
+variable "db_endpoint" {
+ description = "database endpoint"
+  type        = string
+}

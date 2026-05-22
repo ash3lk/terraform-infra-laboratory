@@ -28,7 +28,7 @@ resource "aws_iam_role" "ec2_role" {
 
 resource "aws_iam_policy" "ssm_rds_read" {
   name        = "${var.env}-ec2-ssm-rds-read-policy"
-  description = "Allows EC2 to safely fetch RDS password from SSM Parameter Store"
+  description = "Allows EC2 to safely fetch RDS password from SSM"
 
   policy = jsonencode({
     Version = "2012-10-17"
@@ -92,11 +92,11 @@ data "aws_ecr_repository" "backend" {
 module "ec2" {
   source    = "../../modules/ec2"
   backend_image_url = "${data.aws_ecr_repository.backend.repository_url}:latest"
+  db_endpoint = module.rds.db_endpoint 
   env       = var.env
   ami_id    = data.aws_ami.ubuntu.id 
   key_name  = var.key_name  
   iam_instance_profile = aws_iam_instance_profile.ec2_profile.name         
-  
   subnet_id = module.vpc.public_subnets[0] 
   sg_id     = module.sg.ec2_sg_id              
 }
