@@ -12,65 +12,39 @@ resource "aws_instance" "web" {
   associate_public_ip_address = true
 
 user_data = <<-EOF
-#!/bin/bash
-exec > /var/log/user_data.log 2>&1
-set -e
+              #!/bin/bash
 
-apt-get update -y
-apt-get install -y docker.io docker-compose awscli
+              set -x
 
-systemctl enable docker
-systemctl start docker
+            
+              killall apt apt-get || true
+              rm -f /var/lib/apt/lists/lock
+              rm -f /var/cache/apt/archives/lock
+              rm -f /var/lib/dpkg/lock*
 
-usermod -aG docker ubuntu
+              dpkg --configure -a
 
-# wait docker
-until docker info >/dev/null 2>&1; do
-  sleep 1
-done
+              apt-get update -y
 
-# ECR login
-REGISTRY_URL=$(echo "${var.backend_image_url}" | cut -d'/' -f1)
+              apt-get install -y unzip curl docker.io docker-compose || {
+                echo "Falling back to official docker script..."
+                curl -fsSL https://get.docker.com -o get-docker.sh
+                sh get-docker.sh
+                apt-get install -y docker-compose
+              }
+              
+              systemctl start docker || true
+              systemctl enable docker || true       
+              groupadd docker || true
+              usermod -aG docker ubuntu
 
-aws ecr get-login-password --region eu-north-1 \
-  | docker login --username AWS --password-stdin $REGISTRY_URL
+              cd /tmp
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip -o awscliv2.zip
+              ./aws/install
 
-# get DB password
-DB_PASSWORD=$(aws ssm get-parameter \
-  --name "/${var.env}/rds/db_password" \
-  --with-decryption \
-  --query "Parameter.Value" \
-  --output text \
-  --region eu-north-1)
-
-# app folder
-mkdir -p /home/ubuntu/app
-cd /home/ubuntu/app
-
-# docker-compose file
-cat > docker-compose.yml <<COMPOSE
-version: "3.8"
-
-services:
-  backend:
-    image: ${var.backend_image_url}
-    container_name: backend
-    restart: always
-    ports:
-      - "80:8080"
-    environment:
-      HTTP_PORT: 8080
-      DB_URL: postgres://dbadmin:$${DB_PASSWORD}@${var.db_endpoint}/infra_laboratory_db?sslmode=require
-COMPOSE
-
-# run app
-docker-compose pull
-docker-compose up -d
-EOF
- 
-
-
-
+              rm -rf awscliv2.zip aws
+              EOF
   tags = {
     Name        = "server-${var.env}"
     Environment = var.env
