@@ -2,7 +2,7 @@
 
 A hands-on laboratory project demonstrating the design, implementation, and deployment of a secure, scalable, and resilient AWS cloud infrastructure using Terraform (Infrastructure as Code). 
 
-This repository serves as a portfolio-level showcase of my modern DevOps practices, multi-layer networking design, and systems engineering mindset.
+
 
 ---
 
